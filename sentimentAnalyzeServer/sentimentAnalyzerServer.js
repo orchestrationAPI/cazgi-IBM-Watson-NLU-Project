@@ -1,7 +1,7 @@
 const express = require('express');
 const dotenv = require('dotenv');
 dotenv.config();
-function getNLUInstance() {
+var getNLUInstance = function getNLUInstance() {
 const NaturalLanguageUnderstandingV1 = require('ibm-watson/natural-language-understanding/v1');
 const { IamAuthenticator } = require('ibm-watson/auth');
 const naturalLanguageUnderstanding = new NaturalLanguageUnderstandingV1({
