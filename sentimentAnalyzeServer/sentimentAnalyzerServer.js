@@ -1,7 +1,7 @@
 const express = require('express');
 const app = new express();
 
-app.use(express.static('client'))
+app.use(express.static('sentimentAnalyzeClient'))
 
 const cors_app = require('cors');
 app.use(cors_app());
@@ -31,7 +31,7 @@ const naturalLanguageUnderstanding = new NaturalLanguageUnderstandingV1({
 
 
 app.get("/",(req,res)=>{
-    res.render('app.js');
+    res.render('index.js');
   });
 
 app.get("/url/emotion", (req,res) => {
