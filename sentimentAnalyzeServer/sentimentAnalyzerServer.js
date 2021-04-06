@@ -3,7 +3,7 @@ const app = new express();
 var path = require('path');
 //app.use(express.static('sentimentAnalyzeClient'))
 app.use(express.static(path.join(__dirname, 'sentimentAnalyzeClient')));
-
+console.log(path.join(__dirname, 'sentimentAnalyzeClient'));
 const cors_app = require('cors');
 app.use(cors_app());
 
