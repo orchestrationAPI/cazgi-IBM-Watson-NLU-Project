@@ -1,6 +1,8 @@
 const express = require('express');
 const app = new express();
-var path = require('path');
+
+const path = require('path');
+const port = process.env.PORT
 //app.use(express.static('sentimentAnalyzeClient'))
 app.use(express.static(path.join(__dirname, 'sentimentAnalyzeClient')));
 console.log(path.join(__dirname, 'sentimentAnalyzeClient'));
@@ -9,6 +11,7 @@ app.use(cors_app());
 
 const dotenv = require('dotenv');
 dotenv.config();
+
 function getNLUInstance() {
 let api_key = process.env.API_KEY;
 let api_url = process.env.API_URL;
@@ -32,7 +35,7 @@ const naturalLanguageUnderstanding = new NaturalLanguageUnderstandingV1({
 
 
 app.get("/",(req,res)=>{
-    res.render('index.js');
+    res.render(path.join(__dirname, 'sentimentAnalyzeClient/public', 'index.html'));
   });
 
 app.get("/url/emotion", (req,res) => {
@@ -53,6 +56,14 @@ app.get("/text/sentiment", (req,res) => {
     return res.send("text sentiment for "+req.query.text);
 });
 
-let server = app.listen(8080, () => {
+// Handle React routing, return all requests to React app
+  app.get('*', function(req, res) {
+    res.sendFile(path.join(__dirname, 'sentimentAnalyzeClient/public', 'index.html'));
+  });
+
+
+app.listen(port, () => console.log(`Listening on port ${port}`));
+
+/*let server = app.listen(8080, () => {
     console.log('Listening', server.address().port)
-})
+})*/
