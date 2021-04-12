@@ -1,15 +1,19 @@
 const express = require('express');
-const app = new express();
+const bodyParser = require('body-parser');
 const path = require('path');
-const port = process.env.PORT
 
-app.use(express.static(path.join(__dirname, 'sentimentAnalyzeClient')));
+const app = express();
+const dotenv = require('dotenv');
+dotenv.config();
+const port = process.env.PORT || 5000;
+
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+
+app.use(express.static('client'))
 
 const cors_app = require('cors');
 app.use(cors_app());
-
-const dotenv = require('dotenv');
-dotenv.config();
 
 function getNLUInstance() {
 let api_key = process.env.API_KEY;
@@ -17,7 +21,6 @@ let api_url = process.env.API_URL;
   
 const NaturalLanguageUnderstandingV1 = require('ibm-watson/natural-language-understanding/v1');
 const { IamAuthenticator } = require('ibm-watson/auth');
-
 const naturalLanguageUnderstanding = new NaturalLanguageUnderstandingV1({
   version: '2020-08-01',
   authenticator: new IamAuthenticator({
@@ -31,16 +34,13 @@ const naturalLanguageUnderstanding = new NaturalLanguageUnderstandingV1({
 
 
 
-
-
 app.get("/",(req,res)=>{
-    res.render(path.join(__dirname, 'sentimentAnalyzeClient/public'));
+    res.render('index.html');
   });
 
 app.get("/url/emotion", (req,res) => {
-  
-    return res.send(getNLUInstance());
-  
+
+    return res.send({"happy":"90","sad":"10"});
 });
 
 app.get("/url/sentiment", (req,res) => {
@@ -48,7 +48,7 @@ app.get("/url/sentiment", (req,res) => {
 });
 
 app.get("/text/emotion", (req,res) => {
-    return res.send(getNLUInstance());
+    return res.send({"happy":"10","sad":"90"});
 });
 
 app.get("/text/sentiment", (req,res) => {
@@ -57,14 +57,17 @@ app.get("/text/sentiment", (req,res) => {
 
 if (process.env.NODE_ENV === 'production') {
   // Serve any static files
-  app.use(express.static(path.join(__dirname, 'sentimentAnalyzeClient/public')));
+  app.use(express.static(path.join(__dirname, 'client/build')));
     
   // Handle React routing, return all requests to React app
   app.get('*', function(req, res) {
-    res.sendFile(path.join(__dirname, 'sentimentAnalyzeClient/public'));
+    res.sendFile(path.join(__dirname, 'client/build', 'index.html'));
   });
 }
 
-
 app.listen(port, () => console.log(`Listening on port ${port}`));
+
+let server = app.listen(8080, () => {
+    console.log('Listening', server.address().port)
+})
 
