@@ -1,11 +1,10 @@
 const express = require('express');
 const app = new express();
-
 const path = require('path');
 const port = process.env.PORT
-//app.use(express.static('sentimentAnalyzeClient'))
+
 app.use(express.static(path.join(__dirname, 'sentimentAnalyzeClient')));
-console.log(path.join(__dirname, 'sentimentAnalyzeClient'));
+
 const cors_app = require('cors');
 app.use(cors_app());
 
@@ -35,7 +34,7 @@ const naturalLanguageUnderstanding = new NaturalLanguageUnderstandingV1({
 
 
 app.get("/",(req,res)=>{
-    res.render(path.join(__dirname, 'sentimentAnalyzeClient/public', 'index.html'));
+    res.render(path.join(__dirname, 'sentimentAnalyzeClient/public'));
   });
 
 app.get("/url/emotion", (req,res) => {
@@ -56,14 +55,16 @@ app.get("/text/sentiment", (req,res) => {
     return res.send("text sentiment for "+req.query.text);
 });
 
-// Handle React routing, return all requests to React app
+if (process.env.NODE_ENV === 'production') {
+  // Serve any static files
+  app.use(express.static(path.join(__dirname, 'sentimentAnalyzeClient/public')));
+    
+  // Handle React routing, return all requests to React app
   app.get('*', function(req, res) {
-    res.sendFile(path.join(__dirname, 'sentimentAnalyzeClient/public', 'index.html'));
+    res.sendFile(path.join(__dirname, 'sentimentAnalyzeClient/public'));
   });
+}
 
 
 app.listen(port, () => console.log(`Listening on port ${port}`));
 
-/*let server = app.listen(8080, () => {
-    console.log('Listening', server.address().port)
-})*/
