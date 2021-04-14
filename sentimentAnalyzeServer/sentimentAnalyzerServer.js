@@ -1,16 +1,6 @@
 const express = require('express');
-const app = new express();
-const path = require('path');
-
 const dotenv = require('dotenv');
 dotenv.config();
-const port = process.env.PORT || 3000;
-
-app.use(express.static('client'))
-
-const cors_app = require('cors');
-app.use(cors_app());
-
 function getNLUInstance() {
 let api_key = process.env.API_KEY;
 let api_url = process.env.API_URL;
@@ -26,7 +16,27 @@ const naturalLanguageUnderstanding = new NaturalLanguageUnderstandingV1({
 });
   
   return naturalLanguageUnderstanding;
-}  
+}
+const app = new express();
+const path = require('path');  
+const port = process.env.PORT || 3000;
+
+app.use(express.static('client'))
+
+const cors_app = require('cors');
+app.use(cors_app());
+
+const analyzeParams = {
+  'url': 'www.ibm.com',
+  'features': {
+    'keywords': {
+      'sentiment': true,
+      'emotion': true,
+      'limit': 3
+    }
+  }
+};
+
 
 app.get("/",(req,res)=>{
     res.render('index.html');
@@ -34,7 +44,16 @@ app.get("/",(req,res)=>{
 
 app.get("/url/emotion", (req,res) => {
 
-    return res.send({"happy":"90","sad":"10"});
+   var naturalLanguageUnderstanding = getNLUInstance();
+   naturalLanguageUnderstanding.analyze(analyzeParams)
+  .then(analysisResults => {
+    console.log(JSON.stringify(analysisResults, null, 2));
+    return res.send(JSON.stringify(analysisResults, null, 2));
+  })
+  .catch(err => {
+    console.log('error:', err);
+  });
+    
 });
 
 app.get("/url/sentiment", (req,res) => {
@@ -49,7 +68,7 @@ app.get("/text/sentiment", (req,res) => {
     return res.send("text sentiment for "+req.query.text);
 });
 
-app.listen(port, () => console.log('Listening on port ${port}'));
+//app.listen(port, () => console.log('Listening on port ${port}'));
 
 let server = app.listen(8080, () => {
     console.log('Listening', server.address().port)
