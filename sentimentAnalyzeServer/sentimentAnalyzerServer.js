@@ -18,9 +18,6 @@ const naturalLanguageUnderstanding = new NaturalLanguageUnderstandingV1({
   return naturalLanguageUnderstanding;
 }
 const app = new express();
-const path = require('path');  
-const port = process.env.PORT || 3000;
-
 app.use(express.static('client'))
 
 const cors_app = require('cors');
@@ -64,8 +61,8 @@ app.get("/url/sentiment", (req,res) => {
   'url': req.query.url,
   'features': {
     'keywords': {
-      'sentiment': true,
-      'emotion': false,
+      'sentiment': false,
+      'emotion': true,
       'limit': 1
     }
   }
@@ -74,7 +71,7 @@ app.get("/url/sentiment", (req,res) => {
    naturalLanguageUnderstanding.analyze(analyzeParams)
   .then(analysisResults => {
     let obj = analysisResults.result.keywords;
-    objresult = obj.map(res=>res.sentiment)
+    objresult = obj.map(res=>res.text)
     console.log(objresult);
     return res.send(objresult);
   })
@@ -86,7 +83,7 @@ app.get("/url/sentiment", (req,res) => {
 app.get("/text/emotion", (req,res) => {
     //return res.send({"happy":"10","sad":"90"});
     const analyzeParams = {
-  'url': req.query.url,
+  'url': req.query.text,
   'features': {
     'keywords': {
       'sentiment': false,
@@ -111,7 +108,7 @@ app.get("/text/emotion", (req,res) => {
 app.get("/text/sentiment", (req,res) => {
     //return res.send("text sentiment for "+req.query.text);
     const analyzeParams = {
-  'url': req.query.url,
+  'url': req.query.text,
   'features': {
     'keywords': {
       'sentiment': true,
@@ -124,7 +121,7 @@ app.get("/text/sentiment", (req,res) => {
    naturalLanguageUnderstanding.analyze(analyzeParams)
   .then(analysisResults => {
     let obj = analysisResults.result.keywords;
-    objresult = obj.map(res=>res.sentiment)
+    objresult = obj.map(res=>res.text)
     console.log(objresult);
     return res.send(objresult);
   })
