@@ -33,10 +33,7 @@ function isNaN(x) {
    return x !== x;
 };
 app.get("/url/emotion", (req,res) => {
-    var url = 'www.ibm.com';
-    if(req.query.url == 'NaN' || req.query.url == null ) {
-         req.query.url = 'www.ibm.com';
-     }
+   
   const analyzeParams = {
   'url':  req.query.url,
   'features': {
@@ -67,14 +64,19 @@ app.get("/url/sentiment", (req,res) => {
      
     
   const analyzeParams = {
+  'url':  req.query.url,
   'features': {
-    },
-    'text': req.query.url
-  };
+    'keywords': {
+      'sentiment': true,
+      'emotion': true,
+      'limit': 1
+    }
+  }
+};
    var naturalLanguageUnderstanding = getNLUInstance();
    naturalLanguageUnderstanding.analyze(analyzeParams)
   .then(analysisResults => {
-    let obj = analysisResults.result;
+    let obj = analysisResults.result.keywords;
     objresult = obj.map(res=>res.text)
     console.log(objresult);
     return res.send(objresult);
@@ -116,7 +118,7 @@ app.get("/text/sentiment", (req,res) => {
   'features': {
     'keywords': {
       'sentiment': true,
-      'emotion': false,
+      'emotion': true,
       'limit': 1
     }
   }

@@ -59,7 +59,7 @@ class App extends React.Component {
       } else {
         output = <div style={{color:"yellow",fontSize:20}}>{response.data}</div>
       }
-      alert(output);
+      
         this.setState({sentimentOutput:output});
         
     });
