@@ -29,10 +29,16 @@ app.use(cors_app());
 app.get("/",(req,res)=>{
     res.render('index.html');
   });
-
+function isNaN(x) {
+   return x !== x;
+};
 app.get("/url/emotion", (req,res) => {
-   const analyzeParams = {
-  'url': req.query.url,
+    var url = 'www.ibm.com';
+    if(req.query.url == 'NaN' || req.query.url == null ) {
+         req.query.url = 'www.ibm.com';
+     }
+  const analyzeParams = {
+  'url':  req.query.url,
   'features': {
     'keywords': {
       'sentiment': false,
@@ -42,11 +48,12 @@ app.get("/url/emotion", (req,res) => {
   }
 };
    var naturalLanguageUnderstanding = getNLUInstance();
+   console.log(naturalLanguageUnderstanding);
     naturalLanguageUnderstanding.analyze(analyzeParams)
   .then(analysisResults => {
     let obj = analysisResults.result.keywords;
     objresult = obj.map(res=>res.emotion)
-    console.log(objresult);
+    
     return res.send(objresult);
   })
   .catch(err => {
@@ -57,20 +64,17 @@ app.get("/url/emotion", (req,res) => {
 
 app.get("/url/sentiment", (req,res) => {
     //return res.send("url sentiment for "+req.query.url);
-    const analyzeParams = {
-  'url': req.query.url,
+     
+    
+  const analyzeParams = {
   'features': {
-    'keywords': {
-      'sentiment': false,
-      'emotion': true,
-      'limit': 1
-    }
-  }
-};
+    },
+    'text': req.query.url
+  };
    var naturalLanguageUnderstanding = getNLUInstance();
    naturalLanguageUnderstanding.analyze(analyzeParams)
   .then(analysisResults => {
-    let obj = analysisResults.result.keywords;
+    let obj = analysisResults.result;
     objresult = obj.map(res=>res.text)
     console.log(objresult);
     return res.send(objresult);

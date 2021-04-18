@@ -40,14 +40,16 @@ class App extends React.Component {
 
     if(this.state.mode === "url") {
       url = url+"/url/sentiment?url="+document.getElementById("textinput").value;
+     
     } else {
       url = url+"/text/sentiment?text="+document.getElementById("textinput").value;
+     
     }
-    ret = axios.get(url);
+     ret = axios.get(url);
     ret.then((response)=>{
 
       //Include code here to check the sentiment and fomrat the data accordingly
-
+      // this.setState({sentimentOutput:<EmotionTable emotions={response.data}/>});
       this.setState({sentimentOutput:response.data});
       let output = response.data;
       if(response.data === "positive") {
@@ -57,8 +59,11 @@ class App extends React.Component {
       } else {
         output = <div style={{color:"yellow",fontSize:20}}>{response.data}</div>
       }
-      this.setState({sentimentOutput:output});
+      alert(output);
+        this.setState({sentimentOutput:output});
+        
     });
+    
   }
 
   sendForEmotionAnalysis = () => {

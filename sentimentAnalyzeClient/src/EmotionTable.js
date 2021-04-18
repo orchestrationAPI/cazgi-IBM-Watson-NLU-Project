@@ -6,7 +6,7 @@ class EmotionTable extends React.Component {
 
     render() {
         
-          const data = this.props.emotions;
+         // const data = this.props.emotions;
           
                         
       return (  
@@ -16,17 +16,19 @@ class EmotionTable extends React.Component {
            
           <table className="table table-bordered">
             <tbody>
-              
+              <tr><th >sadness</th><th>joy</th><th>fear</th><th>disgust</th><th>anger</th></tr>  
             { 
+              
+               this.props.emotions.map((dynamicData) => (
+                 
                
-               this.props.emotions.map((item) => (
-                  <tr key={item} >
-                    {Object.keys(item).map((key) => (
-                             <td colSpan="1">{key}</td>
+                  <tr className="trow" key={dynamicData} >
+                               
+                     
+                      {Object.values(dynamicData).map((val) => (
+                        <td colSpan="1">{val}</td>
                       ))}
-                      {Object.values(item).map((val) => (
-                        <td colSpan="2">{val}</td>
-                      ))}
+
 
                       
                      
